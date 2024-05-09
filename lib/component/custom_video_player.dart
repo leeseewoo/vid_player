@@ -7,9 +7,12 @@ import 'dart:io';
 class CustomVideoPlayer extends StatefulWidget {
   final XFile video;
 
+  final GestureTapCallback onNewVideoPressed;
+
   const CustomVideoPlayer({
     required this.video,
     Key? key,
+    required this.onNewVideoPressed,
   }) : super(key: key);
 
   @override
@@ -18,6 +21,15 @@ class CustomVideoPlayer extends StatefulWidget {
 
 class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   VideoPlayerController? videoController;
+
+  @override
+  void didUpdateWidget(covariant CustomVideoPlayer oldWidget){
+    super.didUpdateWidget(oldWidget);
+
+    if(oldWidget.video.path != widget.video.path) {
+      initializeController();
+    }
+  }
 
   @override
   void initState() {
@@ -33,9 +45,22 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
 
     await videoController.initialize();
 
+    videoController.addListener(videoControllerListener);
+
     setState(() {
       this.videoController = videoController;
     });
+  }
+
+  void videoControllerListener() {
+    setState(() {
+    });
+  }
+
+  @override
+  void dispose() {
+    videoController!.removeListener(videoControllerListener);
+    super.dispose();
   }
 
   @override
@@ -71,7 +96,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
           Align(
             alignment: Alignment.topRight,
               child: CustomIconButton(
-                onPressed: () {},
+                onPressed: widget.onNewVideoPressed,
                 iconData: Icons.photo_camera_back,
               ),
           ),
@@ -134,4 +159,6 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
     }
   }
 }
+
+
 
